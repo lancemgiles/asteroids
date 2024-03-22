@@ -11,6 +11,21 @@ function love.load()
     bullets = {}
     bulletTimerLimit = 0.5
     bulletTimer = bulletTimerLimit
+
+    asteroids = {
+    	{
+    		x = 100,
+    		y = 100,
+    	},
+    	{
+    		x = arenaWidth - 100,
+    		y = 100
+    	},
+    	{
+    		x = arenaWidth / 2,
+    		y = arenaHeight - 100,
+    	},
+    }
 end
 
 
@@ -88,17 +103,11 @@ function love.draw()
 		    	love.graphics.setColor(0, 1, 0)
 		    	love.graphics.circle('fill', bullet.x, bullet.y, 5)
 		    end
+
+		    for asteroidIndex, asteroid in ipairs(asteroids) do
+		    	love.graphics.setColor(1, 1, 0)
+		    	love.graphics.circle('fill', asteroid.x, asteroid.y, 80)
+		    end
 		end
 	end
-
-    -- Temporary
-    love.graphics.origin()
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.print(table.concat({
-        'shipAngle: '..shipAngle,
-        'shipX: '..shipX,
-        'shipY: '..shipY,
-        'shipSpeedX: '..shipSpeedX,
-        'shipSpeedY: '..shipSpeedY,
-    }, '\n'))
 end
