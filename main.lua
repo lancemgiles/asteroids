@@ -6,7 +6,13 @@ function love.load()
     shipAngle = 0
     shipSpeedX = 0
     shipSpeedY = 0
+    shipRadius = 30
+
+    bullets = {}
+    bulletTimerLimit = 0.5
+    bulletTimer = bulletTimerLimit
 end
+
 
 function love.update(dt)
 	local turnSpeed = 10
@@ -29,6 +35,36 @@ function love.update(dt)
 
 	shipX = (shipX + shipSpeedX * dt) % arenaWidth
 	shipY = (shipY + shipSpeedY * dt) % arenaHeight
+
+	for bulletIndex = #bullets, 1, -1 do
+		local bullet = bullets[bulletIndex]
+
+		bullet.timeLeft = bullet.timeLeft - dt
+
+		if bullet.timeLeft <= 0 then
+			table.remove(bullets, bulletIndex)
+		else
+			local bulletSpeed = 500
+			bullet.x = (bullet.x + math.cos(bullet.angle) * bulletSpeed * dt)
+				% arenaWidth
+			bullet.y = (bullet.y + math.sin(bullet.angle) * bulletSpeed * dt)
+				% arenaHeight
+		end
+	end
+
+	bulletTimer = bulletTimer + dt
+
+	if love.keyboard.isDown('s') then
+		if bulletTimer >= bulletTimerLimit then
+			bulletTimer = 0
+			table.insert(bullets, {
+				x = shipX + math.cos(shipAngle) * shipRadius,
+				y = shipY + math.sin(shipAngle) * shipRadius,
+				angle = shipAngle,
+				timeLeft = 4,
+			})
+		end
+	end
 end
 
 function love.draw()
@@ -38,7 +74,7 @@ function love.draw()
 			love.graphics.translate(x * arenaWidth, y * arenaHeight)
 
 			love.graphics.setColor(0, 0, 1)
-    		love.graphics.circle('fill', shipX, shipY, 30)
+    		love.graphics.circle('fill', shipX, shipY, shipRadius)
 
 		    local shipCircleDistance = 20
 		    love.graphics.setColor(0, 1, 1)
@@ -48,6 +84,10 @@ function love.draw()
 		        shipY + math.sin(shipAngle) * shipCircleDistance,
 		        5
 		    )
+		    for bulletIndex, bullet in ipairs(bullets) do
+		    	love.graphics.setColor(0, 1, 0)
+		    	love.graphics.circle('fill', bullet.x, bullet.y, 5)
+		    end
 		end
 	end
 
