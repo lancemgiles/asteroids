@@ -11,6 +11,7 @@ function love.load()
     bullets = {}
     bulletTimerLimit = 0.5
     bulletTimer = bulletTimerLimit
+    bulletRadius = 5
 
     asteroids = {
     	{
@@ -57,6 +58,10 @@ function love.update(dt)
 	shipX = (shipX + shipSpeedX * dt) % arenaWidth
 	shipY = (shipY + shipSpeedY * dt) % arenaHeight
 
+	local function areCirclesIntersecting(aX, aY, aRadius, bX, bY, bRadius)
+		return (aX - bX)^2 + (aY - bY)^2 <= (aRadius + bRadius)^2
+	end
+
 	for bulletIndex = #bullets, 1, -1 do
 		local bullet = bullets[bulletIndex]
 
@@ -70,6 +75,19 @@ function love.update(dt)
 				% arenaWidth
 			bullet.y = (bullet.y + math.sin(bullet.angle) * bulletSpeed * dt)
 				% arenaHeight
+		end
+
+		for asteroidIndex = #asteroids, 1, -1 do
+			local asteroid = asteroids[asteroidIndex]
+
+			if areCirclesIntersecting(
+				bullet.x, bullet.y, bulletRadius,
+				asteroid.x, asteroid.y, asteroidRadius
+			) then
+				table.remove(bullets, bulletIndex)
+				table.remove(asteroids, asteroidIndex)
+				break
+			end
 		end
 	end
 
@@ -85,10 +103,6 @@ function love.update(dt)
 				timeLeft = 4,
 			})
 		end
-	end
-
-	local function areCirclesIntersecting(aX, aY, aRadius, bX, bY, bRadius)
-		return (aX - bX)^2 + (aY - bY)^2 <= (aRadius + bRadius)^2
 	end
 
 	for asteroidIndex, asteroid in ipairs(asteroids) do
@@ -127,7 +141,7 @@ function love.draw()
 		    )
 		    for bulletIndex, bullet in ipairs(bullets) do
 		    	love.graphics.setColor(0, 1, 0)
-		    	love.graphics.circle('fill', bullet.x, bullet.y, 5)
+		    	love.graphics.circle('fill', bullet.x, bullet.y, bulletRadius)
 		    end
 
 		    for asteroidIndex, asteroid in ipairs(asteroids) do
