@@ -1,3 +1,14 @@
+-- TODO:
+-- add music
+-- add shooting sound
+-- add asteroid breaking sound
+-- create start/gameover/win screen that requires input to start
+-- create key to quit game
+-- replace asteroid circles with pixel art
+-- replace ship circle with pixel art
+-- rework colors
+-- create title for window bar
+
 function love.load()
 	arenaWidth = 800
 	arenaHeight = 600
