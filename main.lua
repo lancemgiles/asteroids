@@ -125,6 +125,9 @@ function love.update(dt)
 						stage = asteroid.stage - 1,
 					})
 				end
+
+				table.remove(asteroids, asteroidIndex)
+				break
 			end
 		end
 	end
@@ -156,6 +159,10 @@ function love.update(dt)
 			love.load()
 			break
 		end
+	end
+
+	if #asteroids == 0 then
+		love.load()
 	end
 end
 
